@@ -1,7 +1,7 @@
 WhatTimeIsItInCPP
 =================
 
-TimeStamp for CPP using chrono.
+TimeStamp for CPP using chrono + QPC.
 
 For handsome users.
 
