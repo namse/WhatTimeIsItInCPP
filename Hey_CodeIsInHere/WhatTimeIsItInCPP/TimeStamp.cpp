@@ -51,11 +51,6 @@ Time TimeStamp::WhatTimeIsIt()
 	ret.month = m_StandardMonth;
 	ret.year = m_StandardYear;
 
-	LARGE_INTEGER test, testElapsed;
-	QueryPerformanceCounter(&test);
-	testElapsed.QuadPart = test.QuadPart - currentPerformanceCount.QuadPart;
-	testElapsed.QuadPart *= 1000000;
-	testElapsed.QuadPart /= m_Frequency.QuadPart;
 	return ret;
 }
 #include <iostream>
