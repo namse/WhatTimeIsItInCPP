@@ -12,14 +12,14 @@ class TimeStamp
 public:
 	TimeStamp(int UTC = +9) : m_UTC(UTC)
 	{};
-	~TimeStamp() 
+	~TimeStamp()
 	{};
 
 	// default setting is Seoul.
-	void StartTimer(); 
+	void StartTimer();
 	// because windows use function name - "GetCurrentTime", 
 	// i name this function as joke. plz rename on your project as you want.
-	Time WhatTimeIsIt(); 
+	Time WhatTimeIsIt();
 
 private:
 	// We Should Calculate Y/M/D First.
@@ -34,7 +34,7 @@ private:
 	std::chrono::microseconds m_StandardTime;
 	LARGE_INTEGER m_StandardPerformanceCount;
 	LARGE_INTEGER m_Frequency;
-	
+
 	int m_UTC;
 	int m_StandardYear;
 	int m_StandardMonth;

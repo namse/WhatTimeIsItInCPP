@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TimeStamp.h"
 
 TimeStamp* GTimeStamp = nullptr;
@@ -8,7 +9,7 @@ void TimeStamp::StartTimer()
 	auto now = std::chrono::system_clock::now();
 	m_StandardTime = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch())
 		+ std::chrono::hours(m_UTC);
-	
+
 	QueryPerformanceFrequency(&m_Frequency);
 	QueryPerformanceCounter(&m_StandardPerformanceCount);
 
@@ -16,19 +17,19 @@ void TimeStamp::StartTimer()
 }
 
 Time TimeStamp::WhatTimeIsIt()
-{ 
+{
 	LARGE_INTEGER currentPerformanceCount, elapsedMicroseconds;
 	QueryPerformanceCounter(&currentPerformanceCount);
 
 
 	elapsedMicroseconds.QuadPart = currentPerformanceCount.QuadPart - m_StandardPerformanceCount.QuadPart;
-	
+
 	// We now have the elapsed number of ticks, along with the
 	// number of ticks-per-second. We use these values
 	// to convert to the number of elapsed microseconds.
 	// To guard against loss-of-precision, we convert
 	// to microseconds *before* dividing by ticks-per-second.
-	
+
 	elapsedMicroseconds.QuadPart *= 1000000;
 	elapsedMicroseconds.QuadPart /= m_Frequency.QuadPart;
 
@@ -37,29 +38,35 @@ Time TimeStamp::WhatTimeIsIt()
 	Time ret;
 	ret.micro = currentTime % 1000;
 	ret.milli = (currentTime / 1000) % 1000;
-	
+
 
 
 	std::time_t t = (time_t)(currentTime / 1000000);
 
 	ret.second = t % 60;
 	ret.minute = (t / 60) % 60;
-	ret.hour = (t / 3600) % 24 + m_UTC;
+	ret.hour = (t / 3600) % 24;
+	
 	if (m_StandardEpochDay != t / (3600 * 24))
 		UpdateDefaultDay(t / (3600 * 24));
 	ret.day = m_StandardDay;
 	ret.month = m_StandardMonth;
 	ret.year = m_StandardYear;
 
+	ret.machine_time = ((((((((unsigned long long)ret.hour * (unsigned long long)60)
+		+ (unsigned long long)ret.minute) * (unsigned long long)60)
+		+ (unsigned long long)ret.second) * (unsigned long long)1000)
+		+ (unsigned long long)ret.milli) * (unsigned long long)1000)
+		+ (unsigned long long)ret.micro;
+
 	return ret;
 }
-#include <iostream>
 void TimeStamp::SetDefaultDay()
 {
 	std::time_t t = (time_t)(m_StandardTime.count() / 1000000);
 	std::tm* tm = std::gmtime(&t);
-	
-	
+
+
 	m_StandardYear = tm->tm_year + 1900;
 	m_StandardMonth = tm->tm_mon + 1;
 	m_StandardDay = tm->tm_mday;
@@ -73,8 +80,6 @@ void TimeStamp::UpdateDefaultDay(int dayFromEpoch)
 		m_StandardYear,
 		m_StandardMonth,
 		m_StandardDay);
-	if (IS_21_CENTURY)
-		m_StandardYear -= 100;
 
 	m_StandardEpochDay = dayFromEpoch;
 }
