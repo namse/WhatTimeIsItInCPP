@@ -70,7 +70,7 @@ void TimeStamp::SetDefaultDay()
 	m_StandardYear = tm->tm_year + 1900;
 	m_StandardMonth = tm->tm_mon + 1;
 	m_StandardDay = tm->tm_mday;
-	m_StandardEpochDay = ((t / 3600) + m_UTC) / 24;
+	m_StandardEpochDay = ((t / 3600)) / 24;
 	m_StandardGDay = GetGDay(tm->tm_year, tm->tm_mon + 1, tm->tm_mday) - m_StandardEpochDay;
 }
 
